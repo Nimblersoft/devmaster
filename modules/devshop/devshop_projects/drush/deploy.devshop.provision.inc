@@ -87,6 +87,7 @@ function drush_devshop_provision_post_provision_devshop_deploy($git_ref = '') {
   }
 
   $commands = array();
+  $commands[] = "drush {$environment->drush_alias} sset system.maintenance_mode 1";
 
   drush_log("[{$project_name}] {$environment->name}: " . dt('Running deploy hooks.'), 'notice');
 
@@ -131,6 +132,8 @@ function drush_devshop_provision_post_provision_devshop_deploy($git_ref = '') {
   else {
     drush_log(dt('[DEVSHOP] Skipped reverting all features...'), 'ok');
   }
+
+  $commands[] = "drush {$environment->drush_alias} sset system.maintenance_mode 0";
 
   foreach ($commands as $command) {
     $output = provision_process($command, d()->platform->repo_path, 'DevShop Deploy Hook');
